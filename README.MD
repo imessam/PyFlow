@@ -1,3 +1,3 @@
 # PyFlow
 - A Deep Learning framework
-* The notebooks are for testing the modules. The main framework in on the PyFlow folder
+* The notebooks are for testing the modules. The main framework is on the PyFlow folder
