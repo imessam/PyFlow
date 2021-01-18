@@ -14,7 +14,7 @@ class SGD(Optimizer):
     
         Arguments:
         parameters -- python dictionary containing your parameters 
-        grads -- python dictionary containing your gradients, output of backward
+        grads -- python dictionary containing your gradients
     
             Returns:
             parameters -- python dictionary containing your updated parameters 

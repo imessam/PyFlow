@@ -1,5 +1,5 @@
 import numpy as np
-import pyFiles.Activations as act
+import PyFlow.Activations as act
 
 class Layer():
     
@@ -13,6 +13,12 @@ class Dense(Layer):
         self.num_units=num_units
         self.activation=activation
         self.num_layer=num_layer
+    
+    def printLayer(self):
+        print(f"units : {self.num_units} , activation : {self.activation} , layer no : {self.num_layer}")
+        
+    def getUnits(self):
+        return self.num_units
     
     def init_weights(self,input_units):
         np.random.seed(1)

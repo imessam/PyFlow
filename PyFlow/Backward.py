@@ -1,5 +1,5 @@
 import numpy as np
-import pyFiles.Activations as activ
+import PyFlow.Activations as activ
 
 
 class Backward():
