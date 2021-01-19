@@ -1,3 +1,3 @@
-import PyFlow.Activations,PyFlow.Backward,PyFlow.DataLoader,PyFlow.Layers,PyFlow.Losses,PyFlow.Optimizers
+import PyFlow.Activations,PyFlow.Backward,PyFlow.DataLoader,PyFlow.Layers,PyFlow.Losses,PyFlow.Optimizers,PyFlow.Models
 print("Module imported")
-__all__ = ["Activations", "Backward", "DataLoader","Layers","Losses","Optimizers"]
+__all__ = ["Activations", "Backward", "DataLoader","Layers","Losses","Optimizers","Models"]

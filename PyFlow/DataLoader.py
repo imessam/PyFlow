@@ -39,4 +39,4 @@ class DataLoader():
         if(self.normalize):
             trainX=self.norm(trainX)
             testX=self.norm(testX)
-        return trainX,trainY,testX,testY
+        return trainX,trainY.reshape((trainY.shape[0],1)),testX,testY.reshape((testY.shape[0],1))
