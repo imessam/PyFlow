@@ -111,3 +111,29 @@ class Dense(Layer):
         activ=self.getActivation()
         A,cache=self.linear_activation_forward(inputs,params[f"W{self.num_layer}"],params[f"b{self.num_layer}"],activ)
         return A,cache
+    
+    
+    
+    
+class Dropout(Layer):
+    
+    def __init__(self,p):
+        self.p=p
+       
+        
+    def printLayer(self):
+        print(f"propability : {self.p} ")
+        
+    def forward(self,A):
+        
+        u = np.random.binomial(1, self.p, size=A.shape) / self.p
+        out = A * u
+        cache = u
+        
+        return out, cache
+    
+    
+    
+    
+    
+    

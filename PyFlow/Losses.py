@@ -3,61 +3,6 @@ import numpy as np
 
 class Loss():
     pass
-
-class PerceptronLoss(Loss):
-    
-    def __call__(self,xm,W,yt):
-        
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
-        ypt=np.multiply(yp,yt)
-        
-        loss=[max(0,-i) for i in ypt]
-        
-        grad=np.zeros(xm.shape)
-        for i,y in enumerate(yt):
-            if loss[i]!=0:
-                grad[i,:]=xm[i,:]*y
-                
-        return yp,loss,grad
-    
-class PerceptronLossSVM(Loss):
-    
-    def __call__(self,xm,W,yt):
-        
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
-        ypt=np.multiply(yp,yt)
-        
-        loss=[max(0,1-i) for i in ypt]
-        
-        grad=np.zeros(xm.shape)
-        for i,y in enumerate(yt):
-            if loss[i]!=0:
-                grad[i,:]=xm[i,:]*y
-                
-        return yp,loss,grad
-    
-class IdentityLoss(Loss):
-    
-    def __call__(self,xm,W,yt):
-        
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
-        ypt=np.multiply(yp,-yt)
-        
-        loss=np.log(1+np.exp(ypt))
-        
-        grad=[]
-        
-        return yp,loss,grad
-
     
 class LogLikleHoodLoss(Loss):
         
@@ -89,62 +34,79 @@ class LogLikleHoodLoss(Loss):
     
 class SquaredLoss(Loss):
     
-    def __call__(self,xm,W,yt):
+    def compute_cost(self,AL, Y):
+        """
+        Implement the cost function 
+
+        Arguments:
+        AL -- probability vector corresponding to your label predictions
+        Y -- true "label" vector 
         
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
+
+        Returns:
+        cost -- regression cost cost
+        """
+
+        m = Y.shape[0]
+
         
-        loss=(yt-yp)**2
+        cost=(Y-AL)**2
+        cost=cost/(m*2)
         
-        grad=[]
+        grad=-(Y-AL)/m
         
-        return yp,loss,grad
+        return cost,grad
     
 class RegressionLoss(Loss):
     
-    def __call__(self,xm,W,yt,lamb):
+    def compute_cost(self,AL, Y,W):
+        """
+        Implement the cost function 
+
+        Arguments:
+        AL -- probability vector corresponding to your label predictions
+        Y -- true "label" vector 
+        W -- 
+
+        Returns:
+        cost -- regression cost cost
+        """
+
+        m = Y.shape[0]
+
         
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
+        cost=(Y-AL)**2
+        cost=cost+((lamb/2)*(np.dot(np.transpose(W),W)))
+        cost=cost/(m*2)
         
-        loss=(yt-yp)**2
-        loss=loss+((lamb/2)*(np.dot(np.transpose(W),W)))
-        loss=loss/(xm.shape[0]*2)
+        grad=-(Y-AL)/m
         
-        grad=((yt-yp)*xm)
-        grad=-np.sum(grad,0)/grad.shape[0]
-        
-        return yp,loss,grad
+        return cost,grad
     
-class CrossEntropyLoss(Loss):
+class BinaryCrossEntropyLoss(Loss):
     
     def compute_cost(self,AL, Y):
         """
-        Implement the cost function defined by equation (7).
+        Implement the cost function 
 
         Arguments:
-        AL -- probability vector corresponding to your label predictions, shape (number of examples,1)
-        Y -- true "label" vector (for example: containing 0 if non-cat, 1 if cat), shape (number of examples,1)
+        AL -- probability vector corresponding to your label predictions
+        Y -- true "label" vector 
 
         Returns:
-        cost -- cross-entropy cost
+        cost -- Binary cross-entropy cost
+        grad -- Binary cross-entropy gradient
         """
     
         m = Y.shape[0]
-        #print(m)
-        #print(Y.shape)
-        #print(AL.shape)
 
         # Compute loss from aL and y.
         cost = (1./m) * (-np.dot(Y.T,np.log(AL)) - np.dot((1-Y).T, np.log(1-AL)))
-        #print(cost.shape)
+        
+        grad = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
     
         cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
         assert(cost.shape == ())
     
-        return cost
+        return cost,grad
     

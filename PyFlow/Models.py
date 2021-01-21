@@ -25,9 +25,11 @@ class Sequential(Model):
         in_shape=input_shape
         
         for i,layer in enumerate(self.layers):
-            param=layer.init_weights(in_shape)
-            paramsDict.update(param)
-            in_shape=layer.getUnits()
+            
+            if(isinstance(layer,pf.Layers.Dense)):
+                param=layer.init_weights(in_shape)
+                paramsDict.update(param)
+                in_shape=layer.getUnits()
         
         return paramsDict
     
@@ -38,14 +40,17 @@ class Sequential(Model):
         caches=[]
         
         for i,layer in enumerate(self.layers):
-            A,cache=layer.forward(A,parameters)
-            caches.append(cache)
+            if(isinstance(layer,pf.Layers.Dense)):
+                A,cache=layer.forward(A,parameters)
+                caches.append(cache)
+            elif(isinstance(layer,pf.Layers.Dropout)):
+                A,cache=layer.forward(A)
         
         return A ,caches
     
-    def backward(self,AL,Y,caches):
+    def backward(self,AL,Y,caches,grad):
         
-        back=pf.Backward.Backward(AL,Y,caches)
+        back=pf.Backward.Backward(AL,Y,caches,grad)
         grads=back.backward()
         
         return grads
@@ -57,7 +62,7 @@ class Sequential(Model):
         
         return parameters_new
         
-    def compile(self,optimizer=pf.Optimizers.SGD(0.01),loss=pf.Losses.CrossEntropyLoss(),metric='accuracy'):
+    def compile(self,optimizer=pf.Optimizers.SGD(0.01),loss=pf.Losses.BinaryCrossEntropyLoss(),metric='accuracy'):
         self.optim=optimizer
         self.loss=loss
         self.metric=metric
@@ -77,6 +82,7 @@ class Sequential(Model):
             batch_size=int(X.shape[0]/batches)
         
         for epoch in range(epochs):
+            
         
             for i in range(batches):
             
@@ -89,9 +95,9 @@ class Sequential(Model):
                 
                 A,caches=self.forward(X_in,paramsDict)
                 #print(A)
-                cost=self.loss.compute_cost(A,Y_in)
-                grads=self.backward(A,Y_in,caches)
-                params_dict=self.update(0.01,paramsDict,grads)
+                cost,grad=self.loss.compute_cost(A,Y_in)
+                grads=self.backward(A,Y_in,caches,grad)
+                paramsDict=self.update(0.01,paramsDict,grads)
                 
                 #if(i%5==0):
                     
@@ -101,7 +107,39 @@ class Sequential(Model):
             
             print ("Cost after epoch %i: %f" %(epoch, cost))
 
-        
+        self.parameters=paramsDict
         
         return costs
+    
+    def predict(self,X):
+        """
+        This function is used to predict the results of a  L-layer neural network.
+    
+        Arguments:
+        X -- data set of examples you would like to label
+    
+        Returns:
+        p -- predictions for the given dataset X
+        """
+    
+        m = X.shape[0]
+        n = len(self.parameters) // 2 # number of layers in the neural network
+        p = np.zeros((m,1))
+        # Forward propagation
+        probas, caches = self.forward(X, self.parameters)
+
+    
+        # convert probas to 0/1 predictions
+        for i in range(0, probas.shape[0]):
+            if probas[i,0] > 0.5:
+                p[i,0] = 1
+            else:
+                p[i,0] = 0
+    
+        #print results
+        #print ("predictions: " + str(p))
+        #print ("true labels: " + str(y))
+        #print("Accuracy: "  + str(np.sum((p == y)/m)))
+        
+        return probas,p
                 

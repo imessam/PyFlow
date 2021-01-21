@@ -4,10 +4,11 @@ import PyFlow.Activations as activ
 
 class Backward():
     
-    def __init__(self,AL, Y, caches):
+    def __init__(self,AL, Y, caches,grad):
         self.AL=AL
         self.Y=Y
         self.caches=caches
+        self.grad=grad
         
         
     def relu_backward(self,dA, cache):
@@ -145,7 +146,7 @@ class Backward():
         return dA_prev, dW, db
     
     
-    def L_model_backward(self,AL, Y, caches):
+    def L_model_backward(self,AL, Y, caches,grad):
         """
         Implement the backward propagation for the 
     
@@ -166,7 +167,7 @@ class Backward():
         Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
     
         # Initializing the backpropagation
-        dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+        dAL = grad
         grads["dA"+str(L)]=dAL
     
         current_cache = caches[L-1]
@@ -183,6 +184,6 @@ class Backward():
     
     
     def backward(self):
-        return self.L_model_backward(self.AL,self.Y,self.caches)
+        return self.L_model_backward(self.AL,self.Y,self.caches,self.grad)
 
     
