@@ -64,8 +64,15 @@ class Dense(Layer):
     """
     
         Z = np.dot(A,np.transpose(W)) + b
+        
     
         assert(Z.shape == ( A.shape[0],W.shape[0]))
+        
+        Z[np.isnan(Z)] = 0
+        A[np.isnan(A)] = 0
+        W[np.isnan(W)] = 0
+        b[np.isnan(b)] = 0
+        
         cache = (A, W, b)
     
         return Z, cache
@@ -90,6 +97,8 @@ class Dense(Layer):
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
         Z, linear_cache = self.linear_forward(A_prev, W, b)
         A, activation_cache = activation(Z)
+        
+        A[np.isnan(A)] = 0
     
         assert (A.shape == (A_prev.shape[0],W.shape[0]))
         if isinstance(activation,act.Relu):
@@ -108,8 +117,12 @@ class Dense(Layer):
         
         
     def forward(self,inputs,params):
+        
         activ=self.getActivation()
         A,cache=self.linear_activation_forward(inputs,params[f"W{self.num_layer}"],params[f"b{self.num_layer}"],activ)
+        
+        A[np.isnan(A)] = 0
+        
         return A,cache
     
     
@@ -129,6 +142,8 @@ class Dropout(Layer):
         u = np.random.binomial(1, self.p, size=A.shape) / self.p
         out = A * u
         cache = u
+        
+        out[np.isnan(out)] = 0
         
         return out, cache
     

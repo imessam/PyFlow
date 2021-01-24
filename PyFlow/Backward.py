@@ -29,6 +29,8 @@ class Backward():
         dZ[Z <= 0] = 0
     
         assert (dZ.shape == Z.shape)
+        
+        dZ[np.isnan(dZ)] = 0
     
         return dZ
 
@@ -51,6 +53,8 @@ class Backward():
         dZ = dA * s * (1-s)
     
         assert (dZ.shape == Z.shape)
+        
+        dZ[np.isnan(dZ)] = 0
     
         return dZ
     
@@ -60,27 +64,40 @@ class Backward():
         p = cache
         softmax=activ.Softmax()
         p,__=softmax(p)
+        
+        p[np.isnan(p)] = 0
         #print(np.sum(p,axis=0))
         # First we create for each example feature vector, it's outer product with itself
         # ( p1^2  p1*p2  p1*p3 .... )
         # ( p2*p1 p2^2   p2*p3 .... )
         # ( ...                     )
         tensor1 = np.einsum('ij,ik->ijk', p, p)  # (m, n, n)
+        
+        tensor1[np.isnan(tensor1)] = 0
+        
         # Second we need to create an (n,n) identity of the feature vector
         # ( p1  0  0  ...  )
         # ( 0   p2 0  ...  )
         # ( ...            )
         tensor2 = np.einsum('ij,jk->ijk', p, np.eye(n, n))  # (m, n, n)
+        
+        tensor2[np.isnan(tensor2)] = 0
+        
         # Then we need to subtract the first tensor from the second
         # ( p1 - p1^2   -p1*p2   -p1*p3  ... )
         # ( -p1*p2     p2 - p2^2   -p2*p3 ...)
         # ( ...                              )
         dSoftmax = tensor2 - tensor1
+        
+        dSoftmax[np.isnan(dSoftmax)] = 0
         #print(dSoftmax.shape)
         # Finally, we multiply the dSoftmax (da/dz) by da (dL/da) to get the gradient w.r.t. Z
         dz = np.einsum('ijk,ik->ij', dSoftmax, dA)  # (m, n)
         
+        
         assert (dz.shape == p.shape)
+        
+        dz[np.isnan(dz)] = 0
 
         return dz
 
@@ -109,6 +126,12 @@ class Backward():
         assert (dA_prev.shape == A_prev.shape)
         assert (dW.shape == W.shape)
         assert (db.shape == b.shape)
+        
+        
+        dW[np.isnan(dW)] = 0
+        db[np.isnan(db)] = 0
+        dA_prev[np.isnan(dA_prev)] = 0
+        
     
         return dA_prev, dW, db
     
@@ -168,6 +191,9 @@ class Backward():
     
         # Initializing the backpropagation
         dAL = grad
+        
+        dAL[np.isnan(dAL)] = 0
+        
         grads["dA"+str(L)]=dAL
     
         current_cache = caches[L-1]

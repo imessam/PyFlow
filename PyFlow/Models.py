@@ -1,8 +1,6 @@
 import numpy as np
 import PyFlow as pf
 
-
-
 class Model():
     pass
 
@@ -62,24 +60,34 @@ class Sequential(Model):
         
         return parameters_new
         
-    def compile(self,optimizer=pf.Optimizers.SGD(0.01),loss=pf.Losses.BinaryCrossEntropyLoss(),metric='accuracy'):
+    def compile(self,optimizer=pf.Optimizers.SGD(0.01),loss=pf.Losses.BinaryCrossEntropyLoss(),metric=None):
+        
         self.optim=optimizer
         self.loss=loss
         self.metric=metric
     
-    def fit(self,X,Y,epochs,batches):
+    def fit(self,X,Y,epochs,batches,validation_split=0.0):
+        
+        X_train=X[0:int((1-validation_split)*X.shape[0]),:]
+        Y_train=Y[0:int((1-validation_split)*Y.shape[0]),:]
+        
+        X_valid=X[int((1-validation_split)*X.shape[0]):,:]
+        Y_valid=Y[int((1-validation_split)*Y.shape[0]):,:]
+        
+        print(X_valid.shape[0])
+        print(X_train.shape[0])
         
         self.printLayers()
         paramsDict=self.init_params(X.shape[1])
-        X_in=X
-        Y_in=Y
+        X_in=X_train
+        Y_in=Y_train
         costs=[]
         
         if(batches==0):
             batch_size=1
-            batches=X.shape[0]
+            batches=X_train.shape[0]
         else:
-            batch_size=int(X.shape[0]/batches)
+            batch_size=int(X_train.shape[0]/batches)
         
         for epoch in range(epochs):
             
@@ -88,24 +96,28 @@ class Sequential(Model):
             
                 begin=i*batch_size
                 end=begin+batch_size
-                if(end>X.shape[0]):
-                    end=X.shape[0]
-                X_in=X[begin:end,:]
-                Y_in=Y[begin:end,:]
+                if(end>X_train.shape[0]):
+                    end=X_train.shape[0]
+                X_in=X_train[begin:end,:]
+                Y_in=Y_train[begin:end,:]
                 
                 A,caches=self.forward(X_in,paramsDict)
-                #print(A)
                 cost,grad=self.loss.compute_cost(A,Y_in)
                 grads=self.backward(A,Y_in,caches,grad)
                 paramsDict=self.update(0.01,paramsDict,grads)
+                 
+               
                 
-                #if(i%5==0):
-                    
-                    #print ("Cost after batch %i: %f" %(i, cost))
-                
-                costs.append(cost)
             
-            print ("Cost after epoch %i: %f" %(epoch, cost))
+            print ("Training loss after epoch %i: %f" %(epoch, cost))
+            pred=self.metric(A,Y_in)
+            costs.append(cost)
+            
+            if not(validation_split==0.0):
+                A_valid,__=self.forward(X_valid,paramsDict)
+                print(f"Validation metric :")
+                self.metric(A_valid,Y_valid)
+
 
         self.parameters=paramsDict
         

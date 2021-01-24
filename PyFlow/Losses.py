@@ -4,47 +4,22 @@ import numpy as np
 class Loss():
     pass
     
-class LogLikleHoodLoss(Loss):
+                            ##########Regression Cost Functions#############   
         
-    def sigmoid(self,Z):
-    
-        A = 1/(1+np.exp(-Z))
-        cache = Z
-        
-        return A
-    
-    
-    def __call__(self,xm,W,yt):
-        
-        
-        xm=np.array(xm)
-        W=np.transpose(np.array(W))
-        yt=np.array(yt)
-        yp=np.dot(xm,W)
-        
-        yphat=self.sigmoid(yp)
-        ypt=np.multiply(yp,yt)
-        
-        loss=-np.log(np.abs(((yt/2)-0.5)+yphat))
-        
-        grad=(-yt*xm)/(1+(np.exp(ypt)))
-        grad=np.sum(grad,0)/grad.shape[0]
-        
-        return yphat,loss,grad
-    
-class SquaredLoss(Loss):
+class MSE(Loss):
     
     def compute_cost(self,AL, Y):
         """
-        Implement the cost function 
+        Implement the MSE cost function 
 
         Arguments:
-        AL -- probability vector corresponding to your label predictions
+        AL --  vector corresponding to your label predictions
         Y -- true "label" vector 
         
 
         Returns:
-        cost -- regression cost cost
+        cost -- MSE regression cost 
+        grad -- MSE regression cost gradient
         """
 
         m = Y.shape[0]
@@ -55,33 +30,16 @@ class SquaredLoss(Loss):
         
         grad=-(Y-AL)/m
         
-        return cost,grad
+        cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+        assert(cost.shape == ())
+        
+        cost[np.isnan(cost)] = 0
+        grad[np.isnan(grad)] = 0
+        
+        return cost,grad   
     
-class RegressionLoss(Loss):
     
-    def compute_cost(self,AL, Y,W):
-        """
-        Implement the cost function 
-
-        Arguments:
-        AL -- probability vector corresponding to your label predictions
-        Y -- true "label" vector 
-        W -- 
-
-        Returns:
-        cost -- regression cost cost
-        """
-
-        m = Y.shape[0]
-
-        
-        cost=(Y-AL)**2
-        cost=cost+((lamb/2)*(np.dot(np.transpose(W),W)))
-        cost=cost/(m*2)
-        
-        grad=-(Y-AL)/m
-        
-        return cost,grad
+                                        ##########Classification Cost Functions############# 
     
 class BinaryCrossEntropyLoss(Loss):
     
@@ -107,6 +65,42 @@ class BinaryCrossEntropyLoss(Loss):
     
         cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
         assert(cost.shape == ())
+        
+        cost[np.isnan(cost)] = 0
+        grad[np.isnan(grad)] = 0
+    
+        return cost,grad
+    
+    
+class CategoricalCrossEntropyLoss(Loss):
+    
+    def compute_cost(self,AL, Y):
+        """
+        Implement the cost function 
+
+        Arguments:
+        AL -- probability vector corresponding to your label predictions
+        Y -- true "label" vector 
+
+        Returns:
+        cost -- Categorical cross-entropy cost
+        grad -- Categorical cross-entropy gradient
+        """
+    
+        m = Y.shape[0]
+        
+
+        # Compute loss from aL and y.
+        cost = -(1./m) * (Y*np.log(AL))
+        cost=np.array(np.sum(cost))
+        
+        grad = - (np.divide(Y, AL)) 
+    
+        cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+        assert(cost.shape == ())
+        
+        cost[np.isnan(cost)] = 0
+        grad[np.isnan(grad)] = 0
     
         return cost,grad
     
