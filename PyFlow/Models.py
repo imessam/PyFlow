@@ -1,5 +1,6 @@
 import numpy as np
 import PyFlow as pf
+import matplotlib.pyplot as plt
 
 class Model():
     pass
@@ -105,7 +106,8 @@ class Sequential(Model):
                 cost,grad=self.loss.compute_cost(A,Y_in)
                 grads=self.backward(A,Y_in,caches,grad)
                 paramsDict=self.update(0.01,paramsDict,grads)
-                 
+            
+
                
                 
             
@@ -121,14 +123,19 @@ class Sequential(Model):
 
         self.parameters=paramsDict
         
+        plt.plot([i for i in range(epochs)],costs)
+        plt.xlabel("epochs")
+        plt.ylabel("cost")
+        
         return costs
     
-    def predict(self,X):
+    def predict(self,X,K):
         """
         This function is used to predict the results of a  L-layer neural network.
     
         Arguments:
         X -- data set of examples you would like to label
+        K -- num of units in output layer
     
         Returns:
         p -- predictions for the given dataset X
@@ -136,17 +143,15 @@ class Sequential(Model):
     
         m = X.shape[0]
         n = len(self.parameters) // 2 # number of layers in the neural network
-        p = np.zeros((m,1))
+        p = np.zeros((m,K))
         # Forward propagation
         probas, caches = self.forward(X, self.parameters)
 
     
         # convert probas to 0/1 predictions
         for i in range(0, probas.shape[0]):
-            if probas[i,0] > 0.5:
-                p[i,0] = 1
-            else:
-                p[i,0] = 0
+            maxIndex=np.argmax(probas[i,:])
+            p[i,maxIndex]=1
     
         #print results
         #print ("predictions: " + str(p))

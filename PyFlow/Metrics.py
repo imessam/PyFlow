@@ -1,4 +1,5 @@
 import numpy as np
+import PyFlow as pf
 
 
 
@@ -46,6 +47,9 @@ class CategoricalAccuracy(Metric):
     
     def __call__(self,AL,Y):
         
+        dataLoader=pf.DataLoader.DataLoader()
+        
+        
         
         m=Y.shape[0]*Y.shape[1]
         p = np.zeros(Y.shape)
@@ -56,6 +60,11 @@ class CategoricalAccuracy(Metric):
             
             maxIndex=np.argmax(AL[i,:])
             p[i,maxIndex]=1
+        
+        
+        p=dataLoader.toGroundTruth(p)
+        Y=dataLoader.toGroundTruth(Y)
+        
         print("Accuracy: "  + str(np.sum((p == Y)/m)))
         
         return p

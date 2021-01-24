@@ -1,4 +1,5 @@
 import numpy as np
+import PyFlow as pf
 
 class Activation():
     pass
@@ -6,9 +7,15 @@ class Activation():
 class Sigmoid(Activation):
     
     def __call__(self,Z):
+        
+        
     
         A = np.array((1/(1+np.exp(-Z))),dtype=np.float64)
+        
+        
+        
         cache = Z
+        
         
         A[np.isnan(A)] = 0
         
@@ -18,7 +25,9 @@ class Relu(Activation):
     
     def __call__(self,Z):
     
-        A = np.array((np.maximum(0,Z)),dtype=np.float64)   
+        A = np.array((np.maximum(0,Z)),dtype=np.float64)
+       
+        
         cache = Z
         
         A[np.isnan(A)] = 0

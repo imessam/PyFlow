@@ -32,7 +32,6 @@ class DataLoader():
         var=np.sum((d-mean)**2,0)/M
         var=np.reshape(var,(1,d.shape[1])) 
                        
-        print(var.shape)
         d=(d-mean)/(np.sqrt(var))
         
         return d
@@ -43,6 +42,17 @@ class DataLoader():
         
         for i in range(Y.shape[0]):
             Y_new[i,Y[i,0]]=1
+            
+        return Y_new
+    
+    def toGroundTruth(self,Y):
+        
+        Y_new=np.zeros((Y.shape[0],1))
+            
+        for i in range(Y.shape[0]):
+            
+            maxIndex=np.argmax(Y[i,:])
+            Y_new[i,0]=maxIndex
             
         return Y_new
    
