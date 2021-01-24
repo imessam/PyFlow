@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
-  name = 'PyFlow Framework',         # How you named your package folder (MyLib)
-  packages = ['PyFlow Framework'],   # Chose the same as "name"
+  name = 'PyFlowFW',         # How you named your package folder (MyLib)
+  packages = ['PyFlowFW'],   # Chose the same as "name"
   version = '1.0',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'A deep learning framework',   # Give a short description about your library
