@@ -14,7 +14,7 @@ class Sigmoid(Activation):
         cache = Z
         
         
-        #A[np.isnan(A)] = 0
+        A[np.isnan(A)] = 0
         
         return A, cache
     
@@ -27,7 +27,7 @@ class Relu(Activation):
         
         cache = Z
         
-        #A[np.isnan(A)] = 0
+        A[np.isnan(A)] = 0
     
         return A, cache
     
@@ -42,7 +42,7 @@ class Softmax(Activation):
         s = z_exp/(z_sum)
         cache=z
         
-        #s[np.isnan(s)] = 0
+        s[np.isnan(s)] = 0
     
         return s , cache
     

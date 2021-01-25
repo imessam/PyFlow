@@ -32,8 +32,8 @@ class SGD(Optimizer):
             
             parameters["b" + str(l+1)] = parameters["b" + str(l+1)] - self.alpha * grads["db" + str(l+1)]
             
-            #parameters["W" + str(l+1)][np.isnan(parameters["W" + str(l+1)])] = 0
-            #parameters["b" + str(l+1)][np.isnan(parameters["b" + str(l+1)])] = 0
+            parameters["W" + str(l+1)][np.isnan(parameters["W" + str(l+1)])] = 0
+            parameters["b" + str(l+1)][np.isnan(parameters["b" + str(l+1)])] = 0
             
         return parameters
     
@@ -97,28 +97,28 @@ class Adam(Optimizer):
         
             self.m0["dW" + str(l+1)]=(self.m0["dW" + str(l+1)]*self.beta1) + ((1-self.beta1)*(grads["dW" + str(l+1)]))
             self.m1["dW" + str(l+1)]=(self.m1["dW" + str(l+1)]*self.beta2) + ((1-self.beta2)*(grads["dW" + str(l+1)]**2))
-            #self.m0["dW" + str(l+1)][np.isnan(self.m0["dW" + str(l+1)])] = 0
-            #self.m1["dW" + str(l+1)][np.isnan(self.m1["dW" + str(l+1)])] = 0
+            self.m0["dW" + str(l+1)][np.isnan(self.m0["dW" + str(l+1)])] = 0
+            self.m1["dW" + str(l+1)][np.isnan(self.m1["dW" + str(l+1)])] = 0
         
             self.m0["db" + str(l+1)]=(self.m0["db" + str(l+1)]*self.beta1) + ((1-self.beta1)*(grads["db" + str(l+1)]))
             self.m1["db" + str(l+1)]=(self.m1["db" + str(l+1)]*self.beta2) + ((1-self.beta2)*(grads["db" + str(l+1)]**2))
-            #self.m0["db" + str(l+1)][np.isnan(self.m0["db" + str(l+1)])] = 0
-            #self.m1["db" + str(l+1)][np.isnan(self.m1["db" + str(l+1)])] = 0
+            self.m0["db" + str(l+1)][np.isnan(self.m0["db" + str(l+1)])] = 0
+            self.m1["db" + str(l+1)][np.isnan(self.m1["db" + str(l+1)])] = 0
         
             m0_hat["dW" + str(l+1)]=(self.m0["dW" + str(l+1)])/((1-self.beta1)**self.i)
             m1_hat["dW" + str(l+1)]=(self.m1["dW" + str(l+1)])/((1-self.beta2)**self.i)
-            #m0_hat["dW" + str(l+1)][np.isnan(m0_hat["dW" + str(l+1)])] = 0
+            m0_hat["dW" + str(l+1)][np.isnan(m0_hat["dW" + str(l+1)])] = 0
             m1_hat["dW" + str(l+1)][np.isnan(m1_hat["dW" + str(l+1)])] = 0
-            #
+            
             
             m0_hat["db" + str(l+1)]=(self.m0["db" + str(l+1)])/((1-self.beta1)**self.i)
             m1_hat["db" + str(l+1)]=(self.m1["db" + str(l+1)])/((1-self.beta2)**self.i)
-            #m0_hat["db" + str(l+1)][np.isnan(m0_hat["db" + str(l+1)])] = 0
-            #m1_hat["db" + str(l+1)][np.isnan(m1_hat["db" + str(l+1)])] = 0
+            m0_hat["db" + str(l+1)][np.isnan(m0_hat["db" + str(l+1)])] = 0
+            m1_hat["db" + str(l+1)][np.isnan(m1_hat["db" + str(l+1)])] = 0
         
             parameters["W" + str(l+1)]=parameters["W" + str(l+1)] - ((self.alpha)*((m0_hat["dW" + str(l+1)])/(np.sqrt(m1_hat["dW" + str(l+1)])+epsilon)))
             parameters["b" + str(l+1)]=parameters["b" + str(l+1)] - ((self.alpha)*((m0_hat["db" + str(l+1)])/(np.sqrt(m1_hat["db" + str(l+1)])+epsilon)))
-            #parameters["W" + str(l+1)][np.isnan(parameters["W" + str(l+1)])] = 0
-            #parameters["b" + str(l+1)][np.isnan(parameters["b" + str(l+1)])] = 0
+            parameters["W" + str(l+1)][np.isnan(parameters["W" + str(l+1)])] = 0
+            parameters["b" + str(l+1)][np.isnan(parameters["b" + str(l+1)])] = 0
         
         return parameters

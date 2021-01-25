@@ -30,7 +30,7 @@ class Backward():
     
         assert (dZ.shape == Z.shape)
         
-        #dZ[np.isnan(dZ)] = 0
+        dZ[np.isnan(dZ)] = 0
     
         return dZ
 
@@ -54,7 +54,7 @@ class Backward():
     
         assert (dZ.shape == Z.shape)
         
-        #dZ[np.isnan(dZ)] = 0
+        dZ[np.isnan(dZ)] = 0
     
         return dZ
     
@@ -75,7 +75,7 @@ class Backward():
         
         assert (dz.shape == s.shape)
         
-        #dz[np.isnan(dz)] = 0
+        dz[np.isnan(dz)] = 0
 
         return dz
 
@@ -106,9 +106,9 @@ class Backward():
         assert (db.shape == b.shape)
         
         
-        #dW[np.isnan(dW)] = 0
-        #db[np.isnan(db)] = 0
-        #dA_prev[np.isnan(dA_prev)] = 0
+        dW[np.isnan(dW)] = 0
+        db[np.isnan(db)] = 0
+        dA_prev[np.isnan(dA_prev)] = 0
         
     
         return dA_prev, dW, db
