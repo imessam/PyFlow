@@ -68,10 +68,10 @@ class Dense(Layer):
     
         assert(Z.shape == ( A.shape[0],W.shape[0]))
         
-        Z[np.isnan(Z)] = 0
-        A[np.isnan(A)] = 0
-        W[np.isnan(W)] = 0
-        b[np.isnan(b)] = 0
+        #Z[np.isnan(Z)] = 0
+        #A[np.isnan(A)] = 0
+        #W[np.isnan(W)] = 0
+        #b[np.isnan(b)] = 0
         
         cache = (A, W, b)
     
@@ -98,7 +98,7 @@ class Dense(Layer):
         Z, linear_cache = self.linear_forward(A_prev, W, b)
         A, activation_cache = activation(Z)
         
-        A[np.isnan(A)] = 0
+        #A[np.isnan(A)] = 0
     
         assert (A.shape == (A_prev.shape[0],W.shape[0]))
         if isinstance(activation,act.Relu):
@@ -121,7 +121,7 @@ class Dense(Layer):
         activ=self.getActivation()
         A,cache=self.linear_activation_forward(inputs,params[f"W{self.num_layer}"],params[f"b{self.num_layer}"],activ)
         
-        A[np.isnan(A)] = 0
+        #A[np.isnan(A)] = 0
         
         return A,cache
     
@@ -143,7 +143,7 @@ class Dropout(Layer):
         out = A * u
         cache = u
         
-        out[np.isnan(out)] = 0
+        #out[np.isnan(out)] = 0
         
         return out, cache
     

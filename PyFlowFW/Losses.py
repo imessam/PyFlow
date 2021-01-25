@@ -33,8 +33,8 @@ class MSE(Loss):
         cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
         assert(cost.shape == ())
         
-        cost[np.isnan(cost)] = 0
-        grad[np.isnan(grad)] = 0
+        #cost[np.isnan(cost)] = 0
+        #grad[np.isnan(grad)] = 0
         
         return cost,grad   
     
@@ -61,13 +61,13 @@ class BinaryCrossEntropyLoss(Loss):
         # Compute loss from aL and y.
         cost = (1./m) * (-np.dot(Y.T,np.log(AL)) - np.dot((1-Y).T, np.log(1-AL)))
         
-        grad = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+        grad = - (1./m) * (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
     
         cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
         assert(cost.shape == ())
         
-        cost[np.isnan(cost)] = 0
-        grad[np.isnan(grad)] = 0
+        #cost[np.isnan(cost)] = 0
+        #grad[np.isnan(grad)] = 0
     
         return cost,grad
     
@@ -94,13 +94,13 @@ class CategoricalCrossEntropyLoss(Loss):
         cost = -(1./m) * (Y*np.log(AL))
         cost=np.array(np.sum(cost))
         
-        grad = - (np.divide(Y, AL)) 
+        grad = - (1./m) * (np.divide(Y, AL)) 
     
         cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
         assert(cost.shape == ())
         
-        cost[np.isnan(cost)] = 0
-        grad[np.isnan(grad)] = 0
+        #cost[np.isnan(cost)] = 0
+        #grad[np.isnan(grad)] = 0
     
         return cost,grad
     

@@ -30,7 +30,7 @@ class Backward():
     
         assert (dZ.shape == Z.shape)
         
-        dZ[np.isnan(dZ)] = 0
+        #dZ[np.isnan(dZ)] = 0
     
         return dZ
 
@@ -54,50 +54,28 @@ class Backward():
     
         assert (dZ.shape == Z.shape)
         
-        dZ[np.isnan(dZ)] = 0
+        #dZ[np.isnan(dZ)] = 0
     
         return dZ
     
     def softmax_backward(self,dA, cache):
         # z, da shapes - (m, n)
         m, n = cache.shape
-        p = cache
+        Z = cache
         softmax=activ.Softmax()
-        p,__=softmax(p)
+        s,__=softmax(Z)
         
-        p[np.isnan(p)] = 0
-        #print(np.sum(p,axis=0))
-        # First we create for each example feature vector, it's outer product with itself
-        # ( p1^2  p1*p2  p1*p3 .... )
-        # ( p2*p1 p2^2   p2*p3 .... )
-        # ( ...                     )
-        tensor1 = np.einsum('ij,ik->ijk', p, p)  # (m, n, n)
+       
+        dz=[]
+        for i in range(m):
+            
+            dz.append(np.dot(dA[i,:],np.diagflat(s[i,:]) - np.dot(s[i,:], s[i,:].T)))
         
-        tensor1[np.isnan(tensor1)] = 0
+        dz=np.array(dz)
         
-        # Second we need to create an (n,n) identity of the feature vector
-        # ( p1  0  0  ...  )
-        # ( 0   p2 0  ...  )
-        # ( ...            )
-        tensor2 = np.einsum('ij,jk->ijk', p, np.eye(n, n))  # (m, n, n)
+        assert (dz.shape == s.shape)
         
-        tensor2[np.isnan(tensor2)] = 0
-        
-        # Then we need to subtract the first tensor from the second
-        # ( p1 - p1^2   -p1*p2   -p1*p3  ... )
-        # ( -p1*p2     p2 - p2^2   -p2*p3 ...)
-        # ( ...                              )
-        dSoftmax = tensor2 - tensor1
-        
-        dSoftmax[np.isnan(dSoftmax)] = 0
-        #print(dSoftmax.shape)
-        # Finally, we multiply the dSoftmax (da/dz) by da (dL/da) to get the gradient w.r.t. Z
-        dz = np.einsum('ijk,ik->ij', dSoftmax, dA)  # (m, n)
-        
-        
-        assert (dz.shape == p.shape)
-        
-        dz[np.isnan(dz)] = 0
+        #dz[np.isnan(dz)] = 0
 
         return dz
 
@@ -119,8 +97,8 @@ class Backward():
         A_prev, W, b = cache
         m = A_prev.shape[0]
 
-        dW = 1./m * np.dot(dZ.T,A_prev)
-        db = 1./m * np.sum(dZ, axis = 0, keepdims = True)
+        dW =  np.dot(dZ.T,A_prev)
+        db =  np.reshape(np.sum(dZ,axis=0),(1,dZ.shape[1]))
         dA_prev = np.dot(dZ,W)
     
         assert (dA_prev.shape == A_prev.shape)
@@ -128,9 +106,9 @@ class Backward():
         assert (db.shape == b.shape)
         
         
-        dW[np.isnan(dW)] = 0
-        db[np.isnan(db)] = 0
-        dA_prev[np.isnan(dA_prev)] = 0
+        #dW[np.isnan(dW)] = 0
+        #db[np.isnan(db)] = 0
+        #dA_prev[np.isnan(dA_prev)] = 0
         
     
         return dA_prev, dW, db
@@ -192,7 +170,7 @@ class Backward():
         # Initializing the backpropagation
         dAL = grad
         
-        dAL[np.isnan(dAL)] = 0
+        #dAL[np.isnan(dAL)] = 0
         
         grads["dA"+str(L)]=dAL
     
